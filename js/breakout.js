@@ -1,18 +1,25 @@
-//setup the canvas
+//Canvas Variables
 var canvas = document.getElementById("myCanvas");
 var ctx = canvas.getContext("2d");
 
-//set the starting point
-var x = canvas.with/2;
+// Ball Variables
+var x = canvas.width/2;
 var y = canvas.height-30;
 
-//draw the ball
+function drawBall() {
+	ctx.beginPath();
+	ctx.arc(x, y, 11, 0, Math.PI*2);
+	ctx.fillStyle = "#0095DD";
+	ctx.fill();
+	ctx.closePath();
+		
+}
+
 function draw() {
-ctx.beginpath();
-ctx.arc(x, y, 10, 0, Math.PI*2);
-ctx.fillstyle = "#0095DD";
-ctx.fill();
-ctx.closepath();
+	ctx.clearRect(0,0, canvas.width, canvas.height);
+	drawBall();
+	x += dx;
+	y += dy;
 }
 
 setInterval(draw, 10);
