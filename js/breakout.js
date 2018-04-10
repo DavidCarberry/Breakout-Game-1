@@ -18,6 +18,14 @@ var paddleX = (canvas.width-paddleWidth)/2;
 var rightPressed = false;
 var leftPressed = false; 
 
+//score 
+var score = 0;
+
+// game sounds
+var WINNING_SOUND = new Audio('sounds/woohoo.wav');
+var SCORE_SOUND = new Audio('sounds/success.wav');
+var GAMEOVER_SOUND = new Audio('sounds/gameover.wav');
+
 //setup some bricks
 var brickRowCount = 3;
 var brickColumnCount = 5;
@@ -26,6 +34,7 @@ var brickHeight = 20;
 var brickPadding = 10;
 var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
+
 //hold the bricks
 var bricks = [];
 for(c=0; c<brickColumnCount; c++) {
@@ -62,12 +71,28 @@ function collisionDection() {
 			if(b.status == 1) {
 			if(x > b.x && x < b.x+brickWidth && y > b.y && y < b.y+brickHeight) {
 				dy = -dy;
-				b.status = 0; 
+				b.status = 0;
+                score++;
+				SCORE_SOUND.play();
+                if(score == brickRowCount*brickColumnCount) {
+					WINNING_SOUND.play();
+					alert("YOU WIN, CONGRADULATIONS!");
+					document.location.reload();
+				}				
 			    }
 			}
 		}
 	}
 }
+
+function drawScore() {
+	ctx.font = "16px Arial";
+	ctx.fillStyle = "#0095DD";
+	ctx.fillText("Score: "+score, 8, 20);
+	document.getElementById("gamescore").innerHTML = "Score; " + score;
+}
+
+
 
 //function draws ball on canvas 
  function drawBall() {
@@ -103,6 +128,9 @@ function drawPaddle() {
 	//draw paddle
 	drawPaddle();
 	
+	//draw score
+	drawScore();
+	
  	//bounce off the three walls - game over
  	if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
  		dx = -dx;
@@ -116,6 +144,7 @@ function drawPaddle() {
 			dy = -dy
 		}
 		else {
+			GAMEOVER_SOUND.play();
 			alert("GAME OVER");
 			document.location.reload();
 		}
@@ -134,6 +163,15 @@ function drawPaddle() {
 	x += dx;
 	y += dy;
  }
+ 
+ //function move mouse 
+ function mouseMoveHandler(e) {
+	 var relativeX = e.clientX - canvas.offsetLeft;
+	 if(relativeX > 0 && relativeX < canvas.width) {
+		 paddleX = relativeX - paddleWidth/2;
+	 }
+ }
+ 
  
 
 //define functions to handle key up and key down 
@@ -158,6 +196,6 @@ function drawPaddle() {
 //events that move the paddle 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
  	setInterval(draw, 10);
