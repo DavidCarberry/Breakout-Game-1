@@ -1,18 +1,17 @@
 //setup the canvas
 var canvas = document.getElementById("myCanvas");
-
+ 
 //ctx var 2d content
 var ctx = canvas.getContext("2d");
-
-//other for ball sizwe and position
+ 
+ //other for ball sizwe and position
 var ballRadius = 10;
 var ballColour = "#0095DD"
 var x = canvas.width/2;
 var y = canvas.height-30;
 var dx = 2;
 var dy = -2;
-
-//defining the paddle
+ //defining the paddle
 var paddleHeight = 10;
 var paddleWidth = 75;
 var paddleX = (canvas.width-paddleWidth)/2;
@@ -21,9 +20,9 @@ var leftPressed = false;
 
 
 //function draws ball on canvas 
-function drawBall() {
-	ctx.beginPath();
-	ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+ function drawBall() {
+ 	ctx.beginPath();
+ 	ctx.arc(x, y, ballRadius, 0, Math.PI*2);
 	ctx.fillStyle = ballColour;
 	ctx.fill();
 	ctx.closePath();
@@ -33,42 +32,53 @@ function drawBall() {
 function drawPaddle() {
 	ctx.beginPath();
 	ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
-	ctx.fillStyle = "#0095DD";
-	ctx.fill();
-	ctx.closePath();
-}
-
-function draw () {
-	//clear canvas
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	
-	//draw the ball 
-	drawBall();
-	
+ 	ctx.fillStyle = "#0095DD";
+ 	ctx.fill();
+ 	ctx.closePath();
+ }
+ 
+ function draw () {
+ 	//clear canvas
+ 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+ 	
+ 	//draw the ball 
+ 	drawBall();
+ 	
 	//draw paddle
 	drawPaddle();
 	
-	//bounce off the walls
-	if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
-		dx = -dx;
+ 	//bounce off the three walls - game over
+ 	if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+ 		dx = -dx;
+ 	}
+ 	
+ 	if(y + dy < ballRadius) {
+ 		dy = -dy;
+ 	} else if(y + dy > canvas.height-ballRadius) {
+		//check if the ball is hitting the paddle 
+		if(x > paddleX && x < paddleX + paddleWidth) {
+			dy = -dy
+		}
+		else {
+			alert("GAME OVER");
+			document.location.reload();
+		}
 	}
-	
-	if(y + dy > canvas.height-ballRadius || y + dy < ballRadius) {
-		dy = -dy;
-	}
-	
+ 	
 	if(rightPressed && paddleX < canvas.width-paddleWidth) {
 		paddleX += 7;
 	}
 	else if(leftPressed &&  paddleX > 0) {
 		paddleX -= 7;
 	}
-	
+ 	
+	x +=dx;
+	y +=dy;
 	
 	x += dx;
 	y += dy;
-}
-
+ }
+ 
 
 //define functions to handle key up and key down 
  function keyDownHandler(e) {
@@ -92,7 +102,6 @@ function draw () {
 //events that move the paddle 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-	
 
 
-	setInterval(draw, 10);
+ 	setInterval(draw, 10);
