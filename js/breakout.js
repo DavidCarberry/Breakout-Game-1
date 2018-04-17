@@ -35,6 +35,9 @@ var brickPadding = 10;
 var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
 
+//lives
+var lives = 3;
+
 //hold the bricks
 var bricks = [];
 for(c=0; c<brickColumnCount; c++) {
@@ -92,6 +95,13 @@ function drawScore() {
 	document.getElementById("gamescore").innerHTML = "Score; " + score;
 }
 
+//Draw lives
+function drawLives() {
+	ctx.font = "16px Arial";
+	ctx.fillStyle = "#0095DD";
+	ctx.fillText("Lives: "+Lives, canvas.width-65,20);
+	document.getElementById("gamelives").innerHTML = "Lives: " + lives;
+}
 
 
 //function draws ball on canvas 
@@ -131,25 +141,39 @@ function drawPaddle() {
 	//draw score
 	drawScore();
 	
+	//draw livesssss
+	drawLives();
+	
  	//bounce off the three walls - game over
  	if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
  		dx = -dx;
  	}
  	
- 	if(y + dy < ballRadius) {
+ 	if(y + dy < ballRadius) { 
  		dy = -dy;
- 	} else if(y + dy > canvas.height-ballRadius) {
+ 	} else if(y + dy > canvas.height-ballRadius) 
 		//check if the ball is hitting the paddle 
 		if(x > paddleX && x < paddleX + paddleWidth) {
 			dy = -dy
 		}
 		else {
-			GAMEOVER_SOUND.play();
-			alert("GAME OVER");
-			document.location.reload();
+			lives--;
+			if(!lives) {
+			     GAMEOVER_SOUND.play();
+			     alert("GAME OVER");
+			     document.location.reload();
 		}
-	}
- 	
+		
+		else {
+			x = canvas.width/2;
+			y = canvas.height-30;
+			dx = 2;
+			dy = -2;
+			paddleX = (canvas.width-paddleWidth)/2;
+		}
+	
+ 	}
+ 
 	if(rightPressed && paddleX < canvas.width-paddleWidth) {
 		paddleX += 7;
 	}
